@@ -14,6 +14,11 @@
       "id": "Menu_Demo",
       "nav_url": "http://localhost:3000/index.php?page=Sales-TopTen",
       "nav_label": "<i class=\"fas fa-sign-in-alt\"></i>&nbsp;TopTen"
+    },
+    {
+      "id": "Menu_Demo",
+      "nav_url": "http://localhost:3000/index.php?page=Carros-CarrosList",
+      "nav_label": "<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Carros"
     }
   ],
   "private": [

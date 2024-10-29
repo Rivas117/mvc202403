@@ -12,4 +12,11 @@ class Carros extends Table
         $carros = self::obtenerRegistros($sqlstr, []);
         return $carros;
     }
+
+    public static function obtenerCarroPorId($id)
+    {
+        $sqlstr = "SELECT * from carros where codigo=:codigo;";
+        $carro = self::obtenerUnRegistro($sqlstr, ["codigo" => $id]);
+        return $carro;
+    }
 }
