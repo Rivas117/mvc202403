@@ -40,6 +40,10 @@ class CarrosForm extends PublicController
     public function run(): void
     {
         $this->inicializarForm();
+        if ($this->isPostBack()) {
+            $this->cargarDatosDelFormulario();
+            $this->procesarAccion();
+        }
         $this->generarViewData();
         Renderer::render("carros/carros_form", $this->viewData);
     }
@@ -62,9 +66,40 @@ class CarrosForm extends PublicController
         $tmpCarro = Carros::obtenerCarroPorId($this->carro["codigo"]);
         $this->carro = $tmpCarro;
     }
-
+    private function cargarDatosDelFormulario()
+    {
+        $this->carro["modelo"] = $_POST["modelo"];
+        $this->carro["marca"] = $_POST["marca"];
+        $this->carro["anio"] = intval($_POST["anio"]);
+        $this->carro["kilometraje"] = intval($_POST["kilometraje"]);
+        $this->carro["chasis"] = $_POST["chasis"];
+        $this->carro["color"] = $_POST["color"];
+        $this->carro["registro"] = $_POST["registro"];
+        $this->carro["cilindraje"] = intval($_POST["cilindraje"]);
+        $this->carro["notas"] = $_POST["notas"];
+        $this->carro["rodaje"] = $_POST["rodaje"];
+        $this->carro["estado"] = $_POST["estado"];
+        $this->carro["precioventa"] = floatval($_POST["precioventa"]);
+        $this->carro["preciominio"] = floatval($_POST["preciominio"]);
+    }
+    private function procesarAccion()
+    {
+        switch ($this->mode) {
+            case "INS":
+                $result = Carros::agregarCarro($this->carro);
+                if ($result) {
+                    Site::redirectToWithMsg("index.php?page=Carros-CarrosList", "Carro Registrado Satisfactoriamnete");
+                }
+                break;
+            case "UPD":
+                break;
+            case "DEL":
+                break;
+        }
+    }
     private function generarViewData()
     {
+        $this->viewData["mode"] = $this->mode;
         $this->viewData["modes_dsc"] = sprintf(
             $this->modeDscArr[$this->mode],
             $this->carro["modelo"],

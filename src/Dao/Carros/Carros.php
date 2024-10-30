@@ -19,4 +19,22 @@ class Carros extends Table
         $carro = self::obtenerUnRegistro($sqlstr, ["codigo" => $id]);
         return $carro;
     }
+    public static function agregarCarro($carro)
+    {
+        unset($carro["codigo"]);
+        unset($carro["creado"]);
+        unset($carro["actualizado"]);
+        $sqlstr = "insert into carros (
+            modelo, marca, anio, kilometraje, 
+            chasis, color, registro, cilindraje, notas, 
+            rodaje, estado, creado, precioventa, preciominio, 
+            actualizado ) values
+        (
+            :modelo, :marca, :anio, :kilometraje, 
+            :chasis, :color, :registro, :cilindraje, :notas, 
+            :rodaje, :estado, now(), :precioventa, :preciominio, 
+            now()
+        );";
+        return self::executeNonQuery($sqlstr, $carro);
+    }
 }
