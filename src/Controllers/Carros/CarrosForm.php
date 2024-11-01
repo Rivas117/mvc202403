@@ -92,8 +92,16 @@ class CarrosForm extends PublicController
                 }
                 break;
             case "UPD":
+                $result = Carros::actualizarCarro($this->carro);
+                if ($result) {
+                    Site::redirectToWithMsg("index.php?page=Carros-CarrosList", "Carro Actualizado Satisfactoriamnete");
+                }
                 break;
             case "DEL":
+                $result = Carros::eliminarCarro($this->carro["codigo"]);
+                if ($result) {
+                    Site::redirectToWithMsg("index.php?page=Carros-CarrosList", "Carro Eliminado Satisfactoriamnete");
+                }
                 break;
         }
     }
@@ -106,5 +114,11 @@ class CarrosForm extends PublicController
             $this->carro["codigo"]
         );
         $this->viewData["carro"] = $this->carro;
+        $this->viewData["readonly"] =
+            ($this->viewData["mode"] === "DEL"
+                || $this->viewData["mode"] === "DSP")
+            ? "readonly" : "";
+
+        $this->viewData["showConfirm"] = ($this->viewData["mode"] !== "DSP");
     }
 }
