@@ -6,6 +6,7 @@ use Controllers\PublicController;
 use Views\Renderer;
 use Utilities\Site;
 use Dao\Carros\Carros;
+use Utilities\Validators;
 
 class CarrosForm extends PublicController
 {
@@ -17,6 +18,17 @@ class CarrosForm extends PublicController
         "DEL" => "Eliminando %s (%s)",
     ];
     private $mode = "";
+
+    private $errors = [];
+
+    private function addError($error, $context = "global")
+    {
+        if (isset($this->errors[$context])) {
+            $this->errors[$context][] = $error;
+        } else {
+            $this->errors[$context] = [$error];
+        }
+    }
 
     private $carro = [
         "codigo" => 0,
@@ -42,7 +54,9 @@ class CarrosForm extends PublicController
         $this->inicializarForm();
         if ($this->isPostBack()) {
             $this->cargarDatosDelFormulario();
-            $this->procesarAccion();
+            if ($this->validarDatos()) {
+                $this->procesarAccion();
+            }
         }
         $this->generarViewData();
         Renderer::render("carros/carros_form", $this->viewData);
@@ -82,6 +96,21 @@ class CarrosForm extends PublicController
         $this->carro["precioventa"] = floatval($_POST["precioventa"]);
         $this->carro["preciominio"] = floatval($_POST["preciominio"]);
     }
+
+    private function validarDatos()
+    {
+        if (Validators::IsEmpty($this->carro["modelo"])) {
+            $this->addError("Modelo no puede vernir Vacio!", "modelo");
+        }
+        if (Validators::IsEmpty($this->carro["marca"])) {
+            $this->addError("Marca no puede vernir Vacio!", "marca");
+        }
+        if ($this->carro["cilindraje"] > 40) {
+            $this->addError("No lo se Rick Parece Falso");
+        }
+        return count($this->errors) === 0;
+    }
+
     private function procesarAccion()
     {
         switch ($this->mode) {
@@ -118,7 +147,10 @@ class CarrosForm extends PublicController
             ($this->viewData["mode"] === "DEL"
                 || $this->viewData["mode"] === "DSP")
             ? "readonly" : "";
-
+        foreach ($this->errors as $context => $errores) {
+            $this->viewData[$context . "_error"] = $errores;
+            $this->viewData[$context . "_haserror"] = count($errores) > 0;
+        }
         $this->viewData["showConfirm"] = ($this->viewData["mode"] !== "DSP");
     }
 }
